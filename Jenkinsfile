@@ -72,7 +72,7 @@ pipeline {
                                     ${NEXUS_DOCKER_REGISTRY}/sonarsource/sonar-scanner-cli \
                                     -Dsonar.projectKey="${SONAR_PROJECT_KEY}" \
                                     -Dsonar.qualitygate.wait=true \
-                                    -Dsonar.sources=.
+                                    -Dsonar.sources=. \
                                     -Dsonar.python.coverage.reportPaths=coverage.xml \
                                     -Dsonar.python.xunit.reportPath=test-results/test-results.xml
                                     '''
