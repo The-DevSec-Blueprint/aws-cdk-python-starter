@@ -9,6 +9,9 @@ pipeline {
         AWS_ACCESS_KEY_ID     = credentials('aws-access-key')
         AWS_SECRET_ACCESS_KEY = credentials('aws-secret-access-key')
         AWS_DEFAULT_REGION    = 'us-east-1'  // Replace with your preferred region
+
+        SNYK_TOKEN = credentials('snyk-api-token')
+        SNYK_ORG_NAME = 'dsb-6YmccYk2Hr2e2suHMxA4KG'
     }
 
     stages {
@@ -37,11 +40,26 @@ pipeline {
             }
         }
 
+        stage('Synk Scan'){
+            steps{
+                sh 'snyk iac test --severity-threshold=high --org=${SNYK_ORG_NAME} --report'
+            }
+        }
+
         stage('CDK Deploy') {
             steps {
                 sh '''
                     . .venv/bin/activate
                     cdk deploy --require-approval never
+                '''
+            }
+        }
+
+        stage('CDK Destroy') {
+            steps {
+                sh '''
+                    . .venv/bin/activate
+                    cdk destroy --all --force
                 '''
             }
         }
