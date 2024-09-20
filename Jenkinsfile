@@ -10,6 +10,7 @@ pipeline {
         AWS_SECRET_ACCESS_KEY = credentials('aws-secret-access-key')
         AWS_DEFAULT_REGION    = 'us-east-1'  // Replace with your preferred region
 
+        NEXUS_DOCKER_REGISTRY = '10.0.0.22:8082'
         SONAR_TOKEN = credentials('sonar-analysis')
         SNYK_TOKEN = credentials('snyk-api-token')
         SNYK_ORG_NAME = 'dsb-6YmccYk2Hr2e2suHMxA4KG'
