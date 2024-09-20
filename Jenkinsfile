@@ -87,7 +87,7 @@ pipeline {
                 stage('Synk Scan'){
                     steps{
                         sh '''
-                        . .env/bin/activate
+                        . .venv/bin/activate
                         snyk iac test --severity-threshold=high --org=${SNYK_ORG_NAME} --report
                         '''
                     }
