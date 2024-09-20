@@ -13,6 +13,7 @@ pipeline {
         NEXUS_DOCKER_REGISTRY = '10.0.0.22:8082'
         SONAR_TOKEN = credentials('sonar-analysis')
         SNYK_TOKEN = credentials('snyk-api-token')
+        SONAR_PROJECT_KEY = "aws-cdk-python-starter"
         SNYK_ORG_NAME = 'dsb-6YmccYk2Hr2e2suHMxA4KG'
     }
 
