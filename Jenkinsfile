@@ -96,7 +96,7 @@ pipeline {
                 stage('Trivy Scan') {
                     steps {
                         sh '''
-                            trivy config --exit-code 0 --severity HIGH,CRITICAL > trivy-report.txt
+                            trivy config --exit-code 0 --severity HIGH,CRITICAL cdk.out > trivy-report.txt
                         '''
                     }
                 }
