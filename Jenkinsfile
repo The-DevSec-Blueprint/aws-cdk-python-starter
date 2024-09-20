@@ -10,6 +10,7 @@ pipeline {
         AWS_SECRET_ACCESS_KEY = credentials('aws-secret-access-key')
         AWS_DEFAULT_REGION    = 'us-east-1'  // Replace with your preferred region
 
+        SONAR_TOKEN = credentials('sonar-analysis')
         SNYK_TOKEN = credentials('snyk-api-token')
         SNYK_ORG_NAME = 'dsb-6YmccYk2Hr2e2suHMxA4KG'
     }
@@ -40,9 +41,58 @@ pipeline {
             }
         }
 
-        stage('Synk Scan'){
-            steps{
-                sh 'snyk iac test --severity-threshold=high --org=${SNYK_ORG_NAME} --report'
+        stage('Test') {
+            steps {
+                sh '''
+                    . .venv/bin/activate
+                    pytest --cov=. --cov-report=xml:coverage.xml --junitxml=test-results/test-results.xml
+                '''
+            }
+            post {
+                always {
+                    junit 'test-results/test-results.xml'
+                    recordCoverage(tools: [[parser: 'COBERTURA', pattern: 'coverage.xml']])
+                }
+            }
+        }
+
+
+        stage('Security Scan'){
+            parallel {
+                stage('Sonar Scan') {
+                    steps {
+                        script {
+                            try{
+                                withSonarQubeEnv(installationName: 'Sonar Server', credentialsId: 'sonar-analysis') {
+                                    sh '''
+                                    docker run --rm \
+                                    -e SONAR_HOST_URL="${SONAR_HOST_URL}" \
+                                    -e SONAR_TOKEN="${SONAR_TOKEN}" \
+                                    -v "$(pwd):/usr/src" \
+                                    ${NEXUS_DOCKER_REGISTRY}/sonarsource/sonar-scanner-cli \
+                                    -Dsonar.projectKey="${SONAR_PROJECT_KEY}" \
+                                    -Dsonar.qualitygate.wait=true \
+                                    -Dsonar.sources=.
+                                    -Dsonar.python.coverage.reportPaths=coverage.xml \
+                                    -Dsonar.python.xunit.reportPath=test-results/test-results.xml
+                                    '''
+                                }
+                            } catch (Exception e) {
+                                // Handle the error
+                                echo "Quality Qate check has failed: ${e}"
+                                currentBuild.result = 'UNSTABLE' // Mark the build as unstable instead of failing
+                            }
+                        }
+                    }
+                }
+                stage('Synk Scan'){
+                    steps{
+                        sh '''
+                        . .env/bin/activate
+                        snyk iac test --severity-threshold=high --org=${SNYK_ORG_NAME} --report
+                        '''
+                    }
+                }
             }
         }
 
@@ -62,6 +112,12 @@ pipeline {
                     cdk destroy --all --force
                 '''
             }
+        }
+    }
+    post {
+        always {
+            archiveArtifacts artifacts: 'trivy-report.txt', allowEmptyArchive: true
+            cleanWs()
         }
     }
 }
