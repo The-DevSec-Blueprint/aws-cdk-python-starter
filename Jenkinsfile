@@ -10,7 +10,7 @@ pipeline {
         AWS_SECRET_ACCESS_KEY = credentials('aws-secret-access-key')
         AWS_DEFAULT_REGION    = 'us-east-1'  // Replace with your preferred region
 
-        NEXUS_DOCKER_REGISTRY = '10.0.0.22:8082'
+        NEXUS_DOCKER_REGISTRY = 'nexus.dsb-hub.local'
         SONAR_TOKEN = credentials('sonar-analysis')
         SNYK_TOKEN = credentials('snyk-api-token')
         SONAR_PROJECT_KEY = "aws-cdk-python-starter"
@@ -20,7 +20,7 @@ pipeline {
     stages {
         stage('Clone') {
             steps {
-                checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[credentialsId: 'Gitea PAT', url: 'http://10.0.0.22/damien/aws-cdk-python-starter.git']])
+                checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[credentialsId: 'Gitea PAT', url: 'https://dsb-hub.local/damien/aws-cdk-python-starter.git']])
             }
         }
 
