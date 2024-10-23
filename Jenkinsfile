@@ -10,7 +10,7 @@ pipeline {
         AWS_SECRET_ACCESS_KEY = credentials('aws-secret-access-key')
         AWS_DEFAULT_REGION    = 'us-east-1'  // Replace with your preferred region
 
-        NEXUS_DOCKER_REGISTRY = 'nexus.dsb-hub.local'
+        NEXUS_DOCKER_REGISTRY = 'nexus-dockerproxy.dsb-hub.local'
         SONAR_TOKEN = credentials('sonar-analysis')
         SNYK_TOKEN = credentials('snyk-api-token')
         SONAR_PROJECT_KEY = "aws-cdk-python-starter"
