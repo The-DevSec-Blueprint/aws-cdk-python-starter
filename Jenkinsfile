@@ -107,7 +107,7 @@ pipeline {
             steps {
                 sh '''
                     . .venv/bin/activate
-                    cdk deploy --require-approval never
+                    npx cdk@latest deploy --require-approval never
                 '''
             }
         }
@@ -116,7 +116,7 @@ pipeline {
             steps {
                 sh '''
                     . .venv/bin/activate
-                    cdk destroy --all --force
+                    npx cdk@latest deploy --require-approval never
                 '''
             }
         }
