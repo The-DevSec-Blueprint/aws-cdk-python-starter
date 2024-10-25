@@ -38,7 +38,7 @@ pipeline {
             steps {
                 sh '''
                     . .venv/bin/activate
-                    cdk synth
+                    npx cdk@latest synth
                 '''
             }
         }
